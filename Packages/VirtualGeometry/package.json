@@ -1,0 +1,16 @@
+{
+    "name": "com.dreamtapir.unity-virtual-geometry",
+    "version": "0.1.0",
+    "displayName": "UnityVirtualGeometry",
+    "description": "virtual geometry package",
+    "unity": "6000.0",
+    "unityRelease":"33f1",
+    "keywords": [
+      "Virtual Geometry",
+      "GPU driven rendering"
+    ],
+    "author": {
+      "name": "DreamTapir",
+      "url": "https://github.com/DreamTapir"
+    }
+}

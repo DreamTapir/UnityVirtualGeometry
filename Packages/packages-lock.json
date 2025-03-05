@@ -1,7 +1,20 @@
 {
   "dependencies": {
+    "com.dreamtapir.unity-container": {
+      "version": "https://github.com/DreamTapir/UnityContainer.git?path=Packages/UnityContainer",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "98a1c3e04ac337fdeae0a54319b55e770cff1899"
+    },
+    "com.dreamtapir.unity-virtual-geometry": {
+      "version": "file:VirtualGeometry",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.unity.ai.navigation": {
-      "version": "2.0.5",
+      "version": "2.0.6",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -46,7 +59,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.rider": {
-      "version": "3.0.31",
+      "version": "3.0.34",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -154,7 +167,7 @@
       }
     },
     "com.unity.test-framework": {
-      "version": "1.4.5",
+      "version": "1.4.6",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -175,7 +188,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.timeline": {
-      "version": "1.8.7",
+      "version": "1.8.8",
       "depth": 0,
       "source": "registry",
       "dependencies": {
