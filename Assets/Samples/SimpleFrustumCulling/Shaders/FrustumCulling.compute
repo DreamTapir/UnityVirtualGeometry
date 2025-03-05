@@ -1,0 +1,73 @@
+#pragma kernel FrustumCulling
+
+#include "Packages/VirtualGeometry/Runtime/Shaders/Common.hlsl"
+#include "Assets/Samples/Common/Shaders/Common.hlsl"
+
+StructuredBuffer<Instance> _Instances;
+AppendStructuredBuffer<uint> _Visibles;
+StructuredBuffer<Meshlet> _Meshlets;
+StructuredBuffer<Vertex> _Vertices;
+StructuredBuffer<float4> _FrustumPlanes;
+
+int _InstanceCount;
+float3 _AabbMin;
+float3 _AabbMax;
+static const int PLANE_NUM = 6;
+
+inline bool IsInFrustum(StructuredBuffer<float4> planes, float3 min, float3 max)
+{
+    float3 pos = (min + max) * 0.5;
+    
+    float3 aabb[8];
+    aabb[0] = float3(min.x, min.y, min.z);
+    aabb[1] = float3(max.x, min.y, min.z);
+    aabb[2] = float3(max.x, max.y, min.z);
+    aabb[3] = float3(min.x, max.y, min.z);
+    aabb[4] = float3(min.x, min.y, max.z);
+    aabb[5] = float3(max.x, min.y, max.z);
+    aabb[6] = float3(max.x, max.y, max.z);
+    aabb[7] = float3(min.x, max.y, max.z);
+    
+    [unroll]
+    for (int i = 0; i < PLANE_NUM; i++)
+    {
+        bool inside = false;
+        const float3 normal = planes[i].xyz;
+        const float pl_dist = planes[i].w;
+
+        [unroll]
+        for (int j = 0; j < 8; j++)
+        {
+            float pt_dist = dot(planes[i].xyz, aabb[j]) + pl_dist;
+
+            if (0.0 <= pt_dist)
+            {
+                inside = true;
+            }
+        }
+
+        if (!inside)
+        {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+[numthreads(128,1,1)]
+void FrustumCulling (uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= (uint)_InstanceCount) return;
+    
+    const uint index = id.x;
+	Instance i = _Instances[index];
+    
+    const float3 min = LocalPosToWorld(_AabbMin, i.localToWorld);
+    const float3 max = LocalPosToWorld(_AabbMax, i.localToWorld);
+    
+    if (IsInFrustum(_FrustumPlanes, min, max))
+    {
+        _Visibles.Append(index);
+    }
+}
