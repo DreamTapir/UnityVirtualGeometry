@@ -8,8 +8,8 @@ namespace VirtualGeometry
         private MeshletBuffer _meshlets;
         private VertexBuffer _vertices;
 
-        public GraphicsBuffer Meshlets => _meshlets;
-        public GraphicsBuffer Vertices => _vertices;
+        public MeshletBuffer Meshlets => _meshlets;
+        public VertexBuffer Vertices => _vertices;
 
         public MeshBuffer(Mesh mesh)
         {

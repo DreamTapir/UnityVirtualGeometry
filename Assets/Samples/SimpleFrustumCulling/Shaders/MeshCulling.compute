@@ -1,0 +1,34 @@
+#pragma kernel MeshCulling
+
+#include "Packages/VirtualGeometry/Runtime/Shaders/Common.hlsl"
+#include "Assets/Samples/Common/Shaders/Common.hlsl"
+
+StructuredBuffer<Instance> _Instances;
+AppendStructuredBuffer<uint> _Visibles;
+StructuredBuffer<Meshlet> _Meshlets;
+StructuredBuffer<Vertex> _Vertices;
+StructuredBuffer<float4> _FrustumPlanes;
+StructuredBuffer<uint> _VisibleCounter;
+RWStructuredBuffer<uint> _VisibleMeshletCounter;
+int _MeshletCount;
+
+int _InstanceCount;
+float3 _AabbMin;
+float3 _AabbMax;
+
+[numthreads(128,1,1)]
+void MeshCulling (uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= (uint)_InstanceCount) return;
+    
+    const uint index = id.x;
+	const Instance i = _Instances[index];
+    
+    const float3 min = LocalPosToWorld(_AabbMin, i.localToWorld);
+    const float3 max = LocalPosToWorld(_AabbMax, i.localToWorld);
+    
+    if (IsInFrustum(_FrustumPlanes, min, max))
+    {
+        _Visibles.Append(index);
+    }
+}

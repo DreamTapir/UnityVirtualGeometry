@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "98a1c3e04ac337fdeae0a54319b55e770cff1899"
+      "hash": "5e7946f6fafeba952401706e3d8f61659a8ff680"
     },
     "com.dreamtapir.unity-virtual-geometry": {
       "version": "file:VirtualGeometry",

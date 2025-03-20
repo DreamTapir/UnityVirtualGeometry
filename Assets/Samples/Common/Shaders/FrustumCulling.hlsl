@@ -1,17 +1,6 @@
-#pragma kernel FrustumCulling
+#ifndef FRUSTUM_CULLING_HLSL
+#define FRUSTUM_CULLING_HLSL
 
-#include "Packages/VirtualGeometry/Runtime/Shaders/Common.hlsl"
-#include "Assets/Samples/Common/Shaders/Common.hlsl"
-
-StructuredBuffer<Instance> _Instances;
-AppendStructuredBuffer<uint> _Visibles;
-StructuredBuffer<Meshlet> _Meshlets;
-StructuredBuffer<Vertex> _Vertices;
-StructuredBuffer<float4> _FrustumPlanes;
-
-int _InstanceCount;
-float3 _AabbMin;
-float3 _AabbMax;
 static const int PLANE_NUM = 6;
 
 inline bool IsInFrustum(StructuredBuffer<float4> planes, float3 min, float3 max)
@@ -55,19 +44,4 @@ inline bool IsInFrustum(StructuredBuffer<float4> planes, float3 min, float3 max)
     return true;
 }
 
-[numthreads(128,1,1)]
-void FrustumCulling (uint3 id : SV_DispatchThreadID)
-{
-    if (id.x >= (uint)_InstanceCount) return;
-    
-    const uint index = id.x;
-	Instance i = _Instances[index];
-    
-    const float3 min = LocalPosToWorld(_AabbMin, i.localToWorld);
-    const float3 max = LocalPosToWorld(_AabbMax, i.localToWorld);
-    
-    if (IsInFrustum(_FrustumPlanes, min, max))
-    {
-        _Visibles.Append(index);
-    }
-}
+#endif // FRUSTUM_CULLING_HLSL

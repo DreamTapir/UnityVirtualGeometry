@@ -2,6 +2,7 @@
 #define VIRTUAL_GEOMETRY_SAMPLE_COMMONE_HLSL
 
 #include "Instance.hlsl"
+#include "FrustumCulling.hlsl"
 
 float3 TransformPoint(float3 pos, float4x4 martix)
 {
