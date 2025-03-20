@@ -43,7 +43,7 @@ namespace VirtualGeometry.Samples.SimpleFrustumCulling
 
         private void Update()
         {
-            Culling();
+            MeshCulling();
             Render();
         }
 
@@ -68,13 +68,13 @@ namespace VirtualGeometry.Samples.SimpleFrustumCulling
             _frustumPlaneBuffer = new FrustumPlaneBuffer(_camera);
         }
 
-        private void Culling()
+        private void MeshCulling()
         {
             var cs = _frustumCullingCs;
-            var k = _frustumCullingCs.FindKernel("FrustumCulling");
             _visibleBuffer.Buffer.SetCounterValue(0);
             _frustumPlaneBuffer.SetPlanes(_camera);
 
+            var k = _frustumCullingCs.FindKernel("MeshCulling");
             cs.SetInt("_InstanceCount", _instanceCount);
             cs.SetVector("_AabbMin", _meshBounds.min);
             cs.SetVector("_AabbMax", _meshBounds.max);
