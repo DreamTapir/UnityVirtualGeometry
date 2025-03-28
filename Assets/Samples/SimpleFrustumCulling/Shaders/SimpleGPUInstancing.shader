@@ -85,9 +85,9 @@ Shader "VertualGeometrySample/SampleGPUInstancing"
                 const bool visible = IsInFrustum(_Frustum, min, max);
                 const float4 nan = GetNan();
 
-                const Vertex v0 = _Vertices[m.triangleID.x];
-                const Vertex v1 = _Vertices[m.triangleID.y];
-                const Vertex v2 = _Vertices[m.triangleID.z];
+                const Vertex v0 = _Vertices[m.indices.x];
+                const Vertex v1 = _Vertices[m.indices.y];
+                const Vertex v2 = _Vertices[m.indices.z];
 
                 const float d0 = dot(l.direction, TransformVector(v0.normal, i.localToWorld)) * 0.5 + 0.5;
                 const float d1 = dot(l.direction, TransformVector(v1.normal, i.localToWorld)) * 0.5 + 0.5;

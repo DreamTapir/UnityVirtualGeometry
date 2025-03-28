@@ -12,7 +12,7 @@ namespace VirtualGeometry
     {
         public float4 aabbMin; // 4bytes * 4 = 16bytes
         public float4 aabbMax; // 4bytes * 4 = 16bytes
-        public int3 triangleID; // 4bytes
+        public int4 indices; // 4bytes * 4 = 16bytes
     }
 
     /// <summary>
@@ -43,7 +43,7 @@ namespace VirtualGeometry
                 var meshlet = new Meshlet();
                 meshlet.aabbMin = new float4(Vector3.Min(v1, Vector3.Min(v2, v3)), 0);
                 meshlet.aabbMax = new float4(Vector3.Max(v1, Vector3.Max(v2, v3)), 0);
-                meshlet.triangleID = new int3(index1, index2, index3);
+                meshlet.indices = new int4(index1, index2, index3, 0);
 
                 _data[i] = meshlet;
             }

@@ -5,7 +5,7 @@ struct Meshlet
 {
     float4 aabbMin;
     float4 aabbMax;
-    int3 triangleID;
+    int4 indices;
 };
 
 #endif // VIRTUAL_GEOMETRY_MESHLET_HLSL
