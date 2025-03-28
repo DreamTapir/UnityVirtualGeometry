@@ -114,7 +114,7 @@ namespace VirtualGeometry.Samples.SimpleFrustumCulling
             m.SetBuffer("_Meshlets", _meshBuffer.Meshlets);
             m.SetBuffer("_Vertices", _meshBuffer.Vertices);
             m.SetBuffer("_Frustum", _frustumPlaneBuffer);
-            Graphics.DrawProceduralIndirect(m, _bounds, MeshTopology.Triangles, _visibleMeshletCounter);
+            Graphics.DrawMeshInstancedIndirect(_mesh, _subMeshIndex, m, _bounds, _visibleBuffer.Counter);
         }
 
         private void Release()

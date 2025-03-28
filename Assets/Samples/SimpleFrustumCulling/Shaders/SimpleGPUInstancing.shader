@@ -36,7 +36,7 @@ Shader "VertualGeometrySample/SampleGPUInstancing"
 
             struct v2g
             {
-                float3 position : TEXCOORD;
+                uint instanceID : TEXCOORD;
             };
 
             struct g2f
@@ -55,9 +55,11 @@ Shader "VertualGeometrySample/SampleGPUInstancing"
 
             inline float GetNan() { return 0.0f / 0.0f; }
 
-            v2g vert()
+            v2g vert(uint instanceID : SV_INSTANCEID)
             {
-                return (v2g)0;
+                v2g o;
+                o.instanceID = instanceID;
+                return o;
             }
 
             void AppendToStream(inout TriangleStream<g2f> stream, const float3 positionWs, const float2 uv, float3 color)
@@ -72,7 +74,7 @@ Shader "VertualGeometrySample/SampleGPUInstancing"
             [maxvertexcount(3)]
             void geom (triangle v2g input[3], inout TriangleStream<g2f> stream, uint id : SV_PRIMITIVEID)
             {
-                const uint visibleIndex = id / _MeshletCount;
+                const uint visibleIndex = input[0].instanceID;
                 const uint meshletIndex = id % _MeshletCount;
                 const uint instanceId = _Visibles[visibleIndex];
                 const Instance i = _Instances[instanceId];
