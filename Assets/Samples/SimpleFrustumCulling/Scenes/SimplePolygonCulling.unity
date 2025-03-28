@@ -420,7 +420,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56105cfc9cd2f244bbf035393d5ac025, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _instanceCount: 16384
+  _instanceCount: 128
   _offset:
     x: 0
     y: 0
@@ -432,6 +432,8 @@ MonoBehaviour:
   _scale: 0.1
   _subMeshIndex: 0
   _mesh: {fileID: -2432090755550338912, guid: bfacc66b87b3bda419b022e9244c6c9a, type: 3}
+  _cullMeshlet: 1
+  _cullBackface: 1
   _camera: {fileID: 1356180655}
   _bounds:
     m_Center: {x: 0, y: 0, z: 0}
@@ -494,6 +496,8 @@ MonoBehaviour:
   _scale: 1
   _subMeshIndex: 0
   _mesh: {fileID: -2432090755550338912, guid: 5939c6d59f844bd4db3a818e66ba7ba8, type: 3}
+  _cullMeshlet: 1
+  _cullBackface: 1
   _camera: {fileID: 1356180655}
   _bounds:
     m_Center: {x: 0, y: 0, z: 0}

@@ -1,6 +1,7 @@
 using UnityEngine;
 using Unity.Mathematics;
 using VirtualGeometry.Samples.Common;
+using UnityEngine.Rendering;
 
 namespace VirtualGeometry.Samples.SimpleFrustumCulling
 {
@@ -14,6 +15,9 @@ namespace VirtualGeometry.Samples.SimpleFrustumCulling
         [SerializeField] private float _scale = 1.0f;
         [SerializeField] private int _subMeshIndex = 0;
         [SerializeField] private Mesh _mesh;
+        [SerializeField] private bool _cullMeshlet = true;
+        [SerializeField] private bool _cullOcclusion = true;
+        [SerializeField] private bool _cullBackface = true;
 
         [Header("Camera")]
         [SerializeField] private Camera _camera;
@@ -34,7 +38,6 @@ namespace VirtualGeometry.Samples.SimpleFrustumCulling
         private MeshBuffer _meshBuffer;
         private InstanceBuffer _instanceBuffer;
         private IndexBuffer _visibleBuffer;
-        private GraphicsBuffer _visibleMeshletCounter;
         private FrustumPlaneBuffer _frustumPlaneBuffer;
         #endregion
 
@@ -71,20 +74,17 @@ namespace VirtualGeometry.Samples.SimpleFrustumCulling
             _instanceBuffer = new InstanceBuffer(_instanceCount, _offset, _padding, _scale);
             _visibleBuffer = new IndexBuffer(_instanceCount);
             _args[0] = (uint)_mesh.GetIndexCount(_subMeshIndex);
-            _args[1] = (uint)_instanceCount;
+            _args[1] = 0;
             _visibleBuffer.SetCountData(_args);
-            _visibleMeshletCounter = new GraphicsBuffer(GraphicsBuffer.Target.IndirectArguments, 5, sizeof(uint));
-            _visibleMeshletCounter.name = "VisibleMeshletCounter";
-            _visibleMeshletCounter.SetData(new uint[] { 0, 1, 0, 0, 0 });
             _frustumPlaneBuffer = new FrustumPlaneBuffer(_camera);
         }
 
         private void MeshCulling()
         {
-            var cs = _frustumCullingCs;
             _visibleBuffer.Buffer.SetCounterValue(0);
             _frustumPlaneBuffer.SetPlanes(_camera);
 
+            var cs = _frustumCullingCs;
             var k = _frustumCullingCs.FindKernel("MeshCulling");
             cs.SetInt("_InstanceCount", _instanceCount);
             cs.SetVector("_AabbMin", _meshBounds.min);
@@ -96,24 +96,22 @@ namespace VirtualGeometry.Samples.SimpleFrustumCulling
             cs.SetBuffer(k, "_FrustumPlanes", _frustumPlaneBuffer);
             cs.GetKernelThreadGroupSizes(k, out uint x, out _, out _);
             cs.Dispatch(k, (int)Mathf.Max(1, (_instanceCount + x - 1) / x), 1, 1);
-
-            k = _frustumCullingCs.FindKernel("VisibleMeshletCount");
-            _visibleBuffer.CopyCount();
-            cs.SetInt("_MeshletCount", _meshBuffer.Meshlets.Count);
-            cs.SetBuffer(k, "_VisibleCounter", _visibleBuffer.Counter);
-            cs.SetBuffer(k, "_VisibleMeshletCounter", _visibleMeshletCounter);
-            cs.Dispatch(k, 1, 1, 1);
         }
 
         private void Render()
         {
+            _visibleBuffer.CopyCount();
             var m = _material;
-            m.SetInt("_MeshletCount", _meshBuffer.Meshlets.Count);
+            m.SetKeyword("CULL_MESHLET", _cullMeshlet);
+            m.SetKeyword("CULL_OCCLUSION", _cullOcclusion);
+            m.SetKeyword("CULL_BACKFACE", _cullBackface);
+            m.SetVector("_CameraPosition", _camera.transform.position);
             m.SetBuffer("_Visibles", _visibleBuffer);
             m.SetBuffer("_Instances", _instanceBuffer);
             m.SetBuffer("_Meshlets", _meshBuffer.Meshlets);
             m.SetBuffer("_Vertices", _meshBuffer.Vertices);
             m.SetBuffer("_Frustum", _frustumPlaneBuffer);
+
             Graphics.DrawMeshInstancedIndirect(_mesh, _subMeshIndex, m, _bounds, _visibleBuffer.Counter);
         }
 
@@ -127,7 +125,6 @@ namespace VirtualGeometry.Samples.SimpleFrustumCulling
             _meshBuffer?.Dispose();
             _instanceBuffer?.Dispose();
             _visibleBuffer?.Dispose();
-            _visibleMeshletCounter?.Dispose();
             _frustumPlaneBuffer?.Dispose();
         }
         #endregion
