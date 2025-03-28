@@ -1,13 +1,8 @@
 Shader "VertualGeometrySample/SampleGPUInstancing"
 {
-    Properties
-    {
-        _MainTex ("Texture", 2D) = "white" {}
-    }
     SubShader
     {
         Tags { "RenderType"="Opaque" }
-        LOD 100
 
         Pass
         {
@@ -24,15 +19,11 @@ Shader "VertualGeometrySample/SampleGPUInstancing"
             #include "Packages/VirtualGeometry/Runtime/Shaders/Common.hlsl"
             #include "Assets/Samples/Common/Shaders/Common.hlsl"
 
-            sampler2D _MainTex;
-            float4 _MainTex_ST;
-
             StructuredBuffer<uint> _Visibles;
             StructuredBuffer<Instance> _Instances;
             StructuredBuffer<Meshlet> _Meshlets;
             StructuredBuffer<Vertex> _Vertices;
             StructuredBuffer<float4> _Frustum;
-            int _MeshletCount;
 
             struct v2g
             {
@@ -72,13 +63,10 @@ Shader "VertualGeometrySample/SampleGPUInstancing"
             }
 
             [maxvertexcount(3)]
-            void geom (triangle v2g input[3], inout TriangleStream<g2f> stream, uint id : SV_PRIMITIVEID)
+            void geom (triangle v2g input[3], inout TriangleStream<g2f> stream, uint primitiveID : SV_PRIMITIVEID)
             {
-                const uint visibleIndex = input[0].instanceID;
-                const uint meshletIndex = id % _MeshletCount;
-                const uint instanceId = _Visibles[visibleIndex];
-                const Instance i = _Instances[instanceId];
-                const Meshlet m = _Meshlets[meshletIndex];
+                const Instance i = _Instances[_Visibles[input[0].instanceID]];
+                const Meshlet m = _Meshlets[primitiveID];
                 const Light l = GetMainLight();
 
                 // Calculate triangle visivility
@@ -95,7 +83,7 @@ Shader "VertualGeometrySample/SampleGPUInstancing"
                 const float d1 = dot(l.direction, TransformVector(v1.normal, i.localToWorld)) * 0.5 + 0.5;
                 const float d2 = dot(l.direction, TransformVector(v2.normal, i.localToWorld)) * 0.5 + 0.5;
 
-                const float3 color = i.color * l.color * l.shadowAttenuation * ConvertHsvToRgb(float3(id * 0.1, 1, 1));
+                const float3 color = i.color * l.color * l.shadowAttenuation * ConvertHsvToRgb(float3(primitiveID * 0.1, 1, 1));
 
                 AppendToStream(stream, visible ? LocalPosToWorld(v0.position, i.localToWorld) : nan, v0.uv, color * d0);
                 AppendToStream(stream, visible ? LocalPosToWorld(v1.position, i.localToWorld) : nan, v1.uv, color * d1);
