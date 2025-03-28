@@ -1,4 +1,5 @@
 #pragma kernel MeshCulling
+#pragma kernel VisibleMeshletCount
 
 #include "Packages/VirtualGeometry/Runtime/Shaders/Common.hlsl"
 #include "Assets/Samples/Common/Shaders/Common.hlsl"
@@ -31,4 +32,12 @@ void MeshCulling (uint3 id : SV_DispatchThreadID)
     {
         _Visibles.Append(index);
     }
+}
+
+[numthreads(1, 1, 1)]
+void VisibleMeshletCount(uint3 id : SV_DispatchThreadID)
+{
+    const uint index = id.x;
+    
+    _VisibleMeshletCounter[1] = _VisibleCounter[1] * _MeshletCount;
 }

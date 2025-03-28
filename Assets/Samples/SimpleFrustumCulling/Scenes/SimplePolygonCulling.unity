@@ -447,7 +447,7 @@ Transform:
   m_GameObject: {fileID: 1414201207}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.01007, y: -21.43, z: 0.009022}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -497,7 +497,7 @@ MonoBehaviour:
   _camera: {fileID: 1356180655}
   _bounds:
     m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 10000, y: 10000, z: 10000}
   _frustumCullingCs: {fileID: 7200000, guid: baf556ce514a2374c9b42f0ecb681d72, type: 3}
   _render: {fileID: 4800000, guid: ad89f98786502d741ad68abae34c8dcc, type: 3}
 --- !u!4 &2084556601
